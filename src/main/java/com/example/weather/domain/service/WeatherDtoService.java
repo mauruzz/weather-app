@@ -2,8 +2,7 @@ package com.example.weather.domain.service;
 
 import com.example.weather.domain.dto.WeatherDto;
 import com.example.weather.domain.repository.WeatherDtoRepository;
-import com.example.weather.persistence.repository.WeatherDtoRepositoryImpl;
-import com.example.weather.service.entity.WeatherInfo;
+import com.example.weather.error.WeatherNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +19,14 @@ public class WeatherDtoService {
         return weatherDtoRepository.getAll();
     }
 
-    public Optional<WeatherDto> getWeatherDtoById(Long idWeatherDto){
-        return weatherDtoRepository.getWeatherDtoById(idWeatherDto);
+    public Optional<WeatherDto> getWeatherDtoById(Long idWeatherDto) throws WeatherNotFoundException {
+
+        Optional<WeatherDto> weatherDto = weatherDtoRepository.getWeatherDtoById(idWeatherDto);
+        if(!weatherDto.isPresent()){
+            throw new WeatherNotFoundException("Record not found.");
+        }
+
+        return weatherDto;
     }
 
     public Optional<List<WeatherDto>> getWeatherEnabled(){
@@ -32,7 +37,7 @@ public class WeatherDtoService {
         return weatherDtoRepository.save(weatherDto);
     }
 
-    public boolean delete(Long idWeatherDto){
+    public boolean delete(Long idWeatherDto) throws WeatherNotFoundException {
         return getWeatherDtoById(idWeatherDto).map(weatherDto -> {
             weatherDtoRepository.delete(idWeatherDto);
             return true;

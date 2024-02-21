@@ -4,6 +4,8 @@ import com.example.weather.domain.dto.WeatherDto;
 import com.example.weather.service.entity.WeatherInfo;
 import org.mapstruct.Mapper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,15 +21,15 @@ public class WeatherInfoMapperImplementation implements WeatherInfoMapper{
 
         WeatherDto.WeatherDtoBuilder weatherDto = WeatherDto.builder();
 
-        weatherDto.id( weatherInfo.getId() );
+        weatherDto.id((long) weatherInfo.getId());
         weatherDto.day( weatherInfo.getDaily().getData().get(0).getDay() );
         weatherDto.icon( weatherInfo.getCurrent().getIcon() );
         weatherDto.summary( weatherInfo.getCurrent().getSummary() );
-        weatherDto.temperature( weatherInfo.getCurrent().getTemperature() );
-        weatherDto.temperature_min( weatherInfo.getDaily().getData().get(0).getAll_day().getTemperature_min() );
-        weatherDto.temperature_max( weatherInfo.getDaily().getData().get(0).getAll_day().getTemperature_max() );
+        weatherDto.temperature( BigDecimal.valueOf(weatherInfo.getCurrent().getTemperature()).setScale(1, RoundingMode.HALF_UP ) );
+        weatherDto.temperature_min( BigDecimal.valueOf(weatherInfo.getDaily().getData().get(0).getAll_day().getTemperature_min()).setScale(1, RoundingMode.HALF_UP ) );
+        weatherDto.temperature_max( BigDecimal.valueOf(weatherInfo.getDaily().getData().get(0).getAll_day().getTemperature_max()).setScale(1, RoundingMode.HALF_UP ) );
         weatherDto.type( weatherInfo.getCurrent().getPrecipitation().getType() );
-        weatherDto.speed( weatherInfo.getCurrent().getWind().getSpeed() );
+        weatherDto.speed( BigDecimal.valueOf(weatherInfo.getCurrent().getWind().getSpeed()).setScale(1, RoundingMode.HALF_UP ) );
         weatherDto.dir( weatherInfo.getCurrent().getWind().getDir() );
 
         return weatherDto.build();
@@ -39,7 +41,7 @@ public class WeatherInfoMapperImplementation implements WeatherInfoMapper{
             return null;
         }
 
-        List<WeatherDto> list = new ArrayList<WeatherDto>( listWeatherInfo.size() );
+        List<WeatherDto> list = new ArrayList<>( listWeatherInfo.size() );
         for ( WeatherInfo weatherInfo : listWeatherInfo ) {
             list.add( toWeatherDto( weatherInfo ) );
         }
@@ -55,7 +57,7 @@ public class WeatherInfoMapperImplementation implements WeatherInfoMapper{
 
         WeatherInfo weatherInfo = new WeatherInfo();
 
-        weatherInfo.setId( weatherDto.getId() );
+        weatherInfo.setId( Integer.parseInt( String.valueOf(weatherDto.getId())) );
         weatherInfo.setApikey( null );
         weatherInfo.setCurrent(null);
         weatherInfo.setDaily(null);
@@ -72,7 +74,7 @@ public class WeatherInfoMapperImplementation implements WeatherInfoMapper{
             return null;
         }
 
-        List<WeatherInfo> list = new ArrayList<WeatherInfo>( listWeatherDto.size() );
+        List<WeatherInfo> list = new ArrayList<>( listWeatherDto.size() );
         for ( WeatherDto weatherDto : listWeatherDto ) {
             list.add( toWeatherInfo( weatherDto ) );
         }

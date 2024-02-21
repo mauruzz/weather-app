@@ -2,6 +2,7 @@ package com.example.weather.web.controller;
 
 import com.example.weather.domain.dto.WeatherDto;
 import com.example.weather.domain.service.WeatherDtoService;
+import com.example.weather.error.WeatherNotFoundException;
 import com.example.weather.persistence.mapper.WeatherInfoMapperImplementation;
 import com.example.weather.service.entity.WeatherInfo;
 import com.example.weather.service.WeatherInfoServiceImpl;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +48,6 @@ public class WeatherController {
     @GetMapping("/new")
     public ResponseEntity<WeatherDto> getWeatherInfo() {
         ResponseEntity<WeatherInfo> weatherInfo = new ResponseEntity<>(weatherInfoServiceImpl.getWeatherInfo(), HttpStatus.OK);
-
         return new ResponseEntity<>(weatherDtoService.save(mapper.toWeatherDto(weatherInfo.getBody())), HttpStatus.CREATED);
     }
 
@@ -91,7 +92,9 @@ public class WeatherController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<WeatherDto> getWeatherDtoById(@Parameter(description = "Id of record to be searched") @PathVariable("id") Long idWeatherDto){
+    public ResponseEntity<WeatherDto> getWeatherDtoById(
+            @Parameter(description = "Id of record to be searched")
+            @PathVariable("id") Long idWeatherDto) throws WeatherNotFoundException {
         return weatherDtoService.getWeatherDtoById(idWeatherDto)
                 .map(weatherDto -> new ResponseEntity<>(weatherDto, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -140,7 +143,7 @@ public class WeatherController {
             }
     )
     @PostMapping("/save")
-    public ResponseEntity<WeatherDto> save(@RequestBody WeatherDto weatherDto){
+    public ResponseEntity<WeatherDto> save(@Valid @RequestBody WeatherDto weatherDto){
         return new ResponseEntity<>(weatherDtoService.save(weatherDto), HttpStatus.CREATED);
     }
 
@@ -206,7 +209,9 @@ public class WeatherController {
             }
     )
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@Parameter(description = "Id of record to be deleted") @PathVariable("id") Long idWeatherDto){
+    public ResponseEntity delete(
+            @Parameter(description = "Id of record to be deleted")
+            @PathVariable("id") Long idWeatherDto) throws WeatherNotFoundException {
         return (weatherDtoService.delete(idWeatherDto))? new ResponseEntity(HttpStatus.OK) : new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 }
