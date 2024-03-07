@@ -1,26 +1,32 @@
-package com.example.weather.web.controller;
+package com.example.weather.persistence.repository;
 
 import com.example.weather.domain.dto.WeatherDto;
+import com.example.weather.persistence.entity.Weather;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
-class WeatherControllerTest {
+class WeatherRepositoryTest {
+
+    @Autowired
+    WeatherRepository weatherRepository;
+    //@Autowired
+    //TestEntityManager testEntityManager;
 
 /*
-
     @BeforeEach
     void setUp() {
-
-        WeatherDto weatherDto = WeatherDto.builder()
-                .id(1L)
+        Weather weather = Weather.builder()
                 .day("2024-02-21")
                 .icon("sunny")
                 .summary("Sunny")
@@ -32,17 +38,20 @@ class WeatherControllerTest {
                 .dir("E")
                 .enabled(false)
                 .build();
+        testEntityManager.persist(weather);
+    }
 
+    @Test
+    public void getWeatherDtoByIdFound() {
+
+        Optional<WeatherDto> weatherDto = weatherRepository.getWeatherDtoById(1L);
+        assertEquals(weatherDto.get().getId(), 1L);
 
     }
 
     @Test
-    void getWeatherDtoById() {
+    void getWeatherEnabled() {
     }
+*/
 
-    @Test
-    void updateEnabled() {
-    }
-
- */
 }

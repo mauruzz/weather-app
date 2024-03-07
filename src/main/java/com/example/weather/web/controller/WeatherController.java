@@ -3,6 +3,8 @@ package com.example.weather.web.controller;
 import com.example.weather.domain.dto.WeatherDto;
 import com.example.weather.domain.service.WeatherDtoService;
 import com.example.weather.error.WeatherNotFoundException;
+import com.example.weather.persistence.entity.Weather;
+import com.example.weather.persistence.mapper.WeatherDtoMapper;
 import com.example.weather.persistence.mapper.WeatherInfoMapperImplementation;
 import com.example.weather.service.entity.WeatherInfo;
 import com.example.weather.service.WeatherInfoServiceImpl;
@@ -28,7 +30,10 @@ public class WeatherController {
     @Autowired
     private WeatherInfoServiceImpl weatherInfoServiceImpl;
     @Autowired
-    private WeatherInfoMapperImplementation mapper;
+    private WeatherInfoMapperImplementation mapperInfo;
+
+    @Autowired
+    private WeatherDtoMapper mapperDto;
 
     @Operation(
             tags = "Weather",
@@ -48,7 +53,8 @@ public class WeatherController {
     @GetMapping("/new")
     public ResponseEntity<WeatherDto> getWeatherInfo() {
         ResponseEntity<WeatherInfo> weatherInfo = new ResponseEntity<>(weatherInfoServiceImpl.getWeatherInfo(), HttpStatus.OK);
-        return new ResponseEntity<>(weatherDtoService.save(mapper.toWeatherDto(weatherInfo.getBody())), HttpStatus.CREATED);
+        Weather weather = mapperInfo.toWeather(weatherInfo.getBody());
+        return new ResponseEntity<>(weatherDtoService.save(mapperDto.toWeatherDto(weather)), HttpStatus.CREATED);
     }
 
     @Operation(
@@ -122,7 +128,7 @@ public class WeatherController {
     )
     @GetMapping("/enabled")
     public ResponseEntity<List<WeatherDto>> getWeatherEnabled(){
-        return weatherDtoService.getWeatherEnabled()
+        return weatherDtoService.getWeatherDtoEnabled()
                 .map(listWeatherDto -> new ResponseEntity<>(listWeatherDto, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

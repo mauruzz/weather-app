@@ -29,8 +29,8 @@ public class WeatherDtoService {
         return weatherDto;
     }
 
-    public Optional<List<WeatherDto>> getWeatherEnabled(){
-        return weatherDtoRepository.getWeatherEnabled();
+    public Optional<List<WeatherDto>> getWeatherDtoEnabled(){
+        return weatherDtoRepository.getWeatherDtoEnabled();
     }
 
     public WeatherDto save(WeatherDto weatherDto){

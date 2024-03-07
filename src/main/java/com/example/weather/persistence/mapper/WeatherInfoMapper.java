@@ -1,6 +1,6 @@
 package com.example.weather.persistence.mapper;
 
-import com.example.weather.domain.dto.WeatherDto;
+import com.example.weather.persistence.entity.Weather;
 import com.example.weather.service.entity.WeatherInfo;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -12,9 +12,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface WeatherInfoMapper {
 
-    //Mapeo clase de WeatherInfo a Weater
-    WeatherDto toWeatherDto(WeatherInfo weatherInfo);
-    List<WeatherDto> toListWeatherDto(List<WeatherInfo> listWeatherInfo);
+    //Mapeo clase de WeatherInfo a Weather
+    Weather toWeather(WeatherInfo weatherInfo);
+    List<Weather> toListWeather(List<WeatherInfo> listWeatherInfo);
 
     //Mapeo clase de WeatherDto a WeatherInfo
     @InheritInverseConfiguration
@@ -27,7 +27,7 @@ public interface WeatherInfoMapper {
             @Mapping(target = "daily", ignore = true),
             @Mapping(target = "current", ignore = true)
     })
-    WeatherInfo toWeatherInfo(WeatherDto weatherDto);
-    List<WeatherInfo> toListWeatherInfo(List<WeatherDto> listWeatherDto);
+    WeatherInfo toWeatherInfo(Weather weather);
+    List<WeatherInfo> toListWeatherInfo(List<Weather> listWeather);
 
 }
